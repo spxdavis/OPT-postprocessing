@@ -51,5 +51,6 @@ function TwISTmCherry(dataFolder,savename)
 
         recon(:,:,i) = gather(x_twist); 
     end
-    save(savename,'recon');
+    %save(savename,'recon');
+    save savename recon -v7.3;
 end

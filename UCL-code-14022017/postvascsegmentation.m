@@ -27,7 +27,8 @@ function postvascsegmentation(datafile,threshedfile,savefile)
 
     vessels(~tumour) = 0;
 
-    save(savefile,'vessels');
+    %save(savefile,'vessels');
+    save savefile vessels -v7.3;
     nii=make_nii(vessels);
     save_nii(nii,strcat(savefile(1:end-3),'nii'));
 end

@@ -5,8 +5,8 @@ function tumour_volumes = tumour_processing
     %single or multiple camera datasets
 
     % folder containing ometiffs
-    gfpFolder = 'C:\Users\Barnet\Documents\MATLAB\UCL-code\test_data_folder';
-    mCherryFolder = 'C:\Users\Barnet\Documents\MATLAB\UCL-code\test_data_folder_Copy';
+    gfpFolder = 'C:\workfolder\GFP_folder';
+    mCherryFolder = 'C:\workfolder\mCherry_folder';
 
     % open and combine ome-tiffs, then save as tiffs in new folder
     %display('Unpacking ometiffs')
@@ -113,9 +113,11 @@ function tumour_volumes = tumour_processing
         vessel_data = VesselEnhanceFilter3D(vessel_data,[1 scale],2,false);
         display(strcat('Enhancing vessels ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))
         save(vesselfile ,'vessel_data');
+        save vesselfile vessel_data -v7.3;
         
         vessel_data = uint8(vessel_data./max(vessel_data(:)).*256);
-        save(vesselfile2 ,'vessel_data'); 
+        %save(vesselfile2 ,'vessel_data'); 
+        save vesselfile2 vessel_data -v7.3;
         
         threshedfile = strcat(gfpReconThreshFolder,'\',gfpDataNames{n},'.mat');
         postvascsegfile = strcat(mCherryReconVesselFolder,'\',mCherryDataNames{n},'3.mat');

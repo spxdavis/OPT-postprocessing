@@ -23,5 +23,6 @@ function pixel_volume = volume_thresh(datafile,threshfile)
         volume(:,:,i) = volume(:,:,i).*(volume(:,:,i)>=LL);
     end
     pixel_volume = sum(volume(:)>=LL);
-    save(threshfile,'volume');
+    %save(threshfile,'volume');
+    save threshfile volume -v7.3;
 end
