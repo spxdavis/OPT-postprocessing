@@ -22,7 +22,7 @@ function crop_3D(datafile,cropfile)
     for i=1:size(volume,3)
         croppedVolume(:,:,i) = imcrop(volume(:,:,i),rect2);        
     end
-    %save(cropfile,'croppedVolume');
-    save cropfile croppedVolume -v7.3;
+    save(cropfile,'croppedVolume','-v7.3');
+    %save cropfile croppedVolume -v7.3;
     close all
 end

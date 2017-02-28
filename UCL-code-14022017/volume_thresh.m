@@ -5,8 +5,9 @@ function pixel_volume = volume_thresh(datafile,threshfile)
     volume = volume.(name{1});
 
     finished = 0;
+    LL = 300;    
     while ~finished    
-    [LL,~] = manual_thresh(volume(:,:,ceil(size(volume,3)/2)));
+    [LL,~] = manual_thresh(volume(:,:,ceil(size(volume,3)/2)),'jet',LL);
     close all
         for i=1:size(volume,3)            
             img = volume(:,:,i);
@@ -23,6 +24,6 @@ function pixel_volume = volume_thresh(datafile,threshfile)
         volume(:,:,i) = volume(:,:,i).*(volume(:,:,i)>=LL);
     end
     pixel_volume = sum(volume(:)>=LL);
-    %save(threshfile,'volume');
-    save threshfile volume -v7.3;
+    save(threshfile,'volume','-v7.3');
+    %save threshfile volume -v7.3;
 end

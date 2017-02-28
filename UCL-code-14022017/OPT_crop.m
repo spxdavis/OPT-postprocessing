@@ -36,6 +36,7 @@ function rect2 = OPT_crop(dataFolder,cropFolder,rot_axis)
             RGB = insertShape(volume(:,:,i)./max(max(volume(:,:,i))),'rectangle',rect2,'LineWidth',5);
             imshow(RGB)
         end
+        close all
         prompt = 'Type 1 if crop is good, 0 if bad. ';
         finished = input(prompt);        
     end
@@ -44,5 +45,4 @@ function rect2 = OPT_crop(dataFolder,cropFolder,rot_axis)
         I = imcrop(volume(:,:,i),rect2);
         imwrite(uint16(I),strcat(cropFolder,dataNames{i}));
     end
-    close all
 end

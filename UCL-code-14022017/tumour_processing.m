@@ -55,8 +55,10 @@ function tumour_volumes = tumour_processing
         display(strcat('Thresholding projections ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))                
         mkdir(strcat(mCherryThreshFolder,'\',mCherryDataNames{n}));      
         mkdir(strcat(gfpThreshFolder,'\',gfpDataNames{n}));
-        projection_thresh(strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'\'));       
-        projection_thresh(strcat(gfpCropFolder,'\',gfpDataNames{n},'\'),strcat(gfpThreshFolder,'\',gfpDataNames{n},'\'));
+        threshedfile = strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'.mat');          
+        projection_thresh(strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),threshedfile);
+        threshedfile = strcat(gfpThreshFolder,'\',gfpDataNames{n},'.mat');        
+        projection_thresh(strcat(gfpCropFolder,'\',gfpDataNames{n},'\'),threshedfile);
     end
 
     mCherryReconFolder = strcat(mCherryFolder,'\reconstructions');
@@ -66,9 +68,10 @@ function tumour_volumes = tumour_processing
     
     for n = 1:length(gfpDataNames)
         display(strcat('Reconstructing projections ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))        
-                
-        TwISTmCherry(strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'\'),strcat(mCherryReconFolder,'\',mCherryDataNames{n},'.mat'));
-        TwISTgfp(strcat(gfpThreshFolder,'\',gfpDataNames{n},'\'),strcat(gfpReconFolder,'\',gfpDataNames{n},'.mat'));
+        threshedfile = strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'.mat');                 
+        TwISTmCherry(threshedfile,strcat(mCherryReconFolder,'\',mCherryDataNames{n},'.mat'));
+        threshedfile = strcat(gfpThreshFolder,'\',gfpDataNames{n},'.mat');         
+        TwISTgfp(threshedfile,strcat(gfpReconFolder,'\',gfpDataNames{n},'.mat'));
     end
 
     gfpReconCropFolder = strcat(gfpReconFolder,'\Cropped');  
@@ -112,12 +115,12 @@ function tumour_volumes = tumour_processing
         vessel_data = vessel_data.(name{1});
         vessel_data = VesselEnhanceFilter3D(vessel_data,[1 scale],2,false);
         display(strcat('Enhancing vessels ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))
-        save(vesselfile ,'vessel_data');
-        save vesselfile vessel_data -v7.3;
+        save(vesselfile ,'vessel_data','-v7.3');
+        %save vesselfile vessel_data -v7.3;
         
         vessel_data = uint8(vessel_data./max(vessel_data(:)).*256);
-        %save(vesselfile2 ,'vessel_data'); 
-        save vesselfile2 vessel_data -v7.3;
+        save(vesselfile2 ,'vessel_data','v7.3'); 
+        %save vesselfile2 vessel_data -v7.3;
         
         threshedfile = strcat(gfpReconThreshFolder,'\',gfpDataNames{n},'.mat');
         postvascsegfile = strcat(mCherryReconVesselFolder,'\',mCherryDataNames{n},'3.mat');

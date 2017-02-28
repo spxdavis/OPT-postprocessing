@@ -1,17 +1,23 @@
 function TwISTgfp(dataFolder,savename)
 
-    dataFiles = dir(strcat(dataFolder,'*.tif'));
-    dataNames = { dataFiles.name };
-    sizeCheck = imread(strcat(dataFolder,dataNames{1}));
-    sizeCheck = size(sizeCheck);    
+    %dataFiles = dir(strcat(dataFolder,'*.tif'));
+    %dataNames = { dataFiles.name };
+    %sizeCheck = imread(strcat(dataFolder,dataNames{1}));
+    %sizeCheck = size(sizeCheck);    
     
-    anglestep = 360/length(dataNames);
+    proj = open(datafile);
+    name = fieldnames(proj);
+    proj = proj.(name{1});
+    
+    anglestep = 360/size(proj,3);
+    %anglestep = 360/length(dataNames);
     angles = 0:anglestep:(360-anglestep);
 
-    recon = zeros(sizeCheck(1),sizeCheck(1),sizeCheck(2));
+    %recon = zeros(sizeCheck(1),sizeCheck(1),sizeCheck(2));
+    recon = zeros(size(proj,1),size(proj,1),size(proj,2));
     
     hR = @(x)  radon(x, angles);
-    hRT = @(x) iradon(x, angles,'linear','Hann',0.6,sizeCheck(1));
+    hRT = @(x) iradon(x, angles,'linear','Hann',0.6,size(recon,1));
     % denoising function;
     tv_iters =25; %tumour 25, vasc 10
     Psi = @(x,th)  tvdenoise(x,2/th,tv_iters);
@@ -24,10 +30,12 @@ function TwISTgfp(dataFolder,savename)
 
     tolA = 0.001;    
     
-    for i = 1:sizeCheck(2)
-        display(strcat('Reconstructing slice ',int2str(i),' of ',' ',int2str(sizeCheck(2))))        
+    for i = 1:size(recon,3)
+        display(strcat('Reconstructing slice ',int2str(i),' of ',' ',int2str(size(recon,3))))        
          
-        sino = sinogram(dataFolder,i,2);
+        %sino = sinogram(dataFolder,i,2);
+        sino = squeeze(proj(:,i,:));        
+        
         sino = pad_sinogram_for_iradon(sino);
         y = gpuArray(sino);
         %y=gpuArray(sino./max(sino(:)));
@@ -52,6 +60,6 @@ function TwISTgfp(dataFolder,savename)
 
         recon(:,:,i) = gather(x_twist); 
     end
-    %save(savename,'recon');
-    save savename recon -v7.3;
+    save(savename,'recon','-v7.3');
+    %save savename recon -v7.3;
 end

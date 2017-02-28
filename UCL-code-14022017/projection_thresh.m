@@ -1,4 +1,4 @@
-function projection_thresh(dataFolder, threshFolder)
+function projection_thresh(dataFolder, savename)
 
     dataFiles = dir(strcat(dataFolder,'*.tif'));
     dataNames = { dataFiles.name };
@@ -25,9 +25,13 @@ function projection_thresh(dataFolder, threshFolder)
         finished = input(prompt); 
     end
 
-    for i = 1:length(dataNames)
-        img = volume(:,:,i);
-        img = img.*(img>=LL);
-        imwrite(uint16(img),strcat(threshFolder,dataNames{i}));
-    end    
+
+    %for i = 1:length(dataNames)
+    %    img = volume(:,:,i);
+    %    img = img.*(img>=LL);
+    %    imwrite(uint16(img),strcat(threshFolder,dataNames{i}));
+    %end
+    
+    volume = volume.*(volume>=LL);
+    save(savename,'volume','-v7.3');
 end
