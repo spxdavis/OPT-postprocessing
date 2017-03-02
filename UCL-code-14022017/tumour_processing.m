@@ -5,8 +5,8 @@ function tumour_volumes = tumour_processing
     %single or multiple camera datasets
 
     % folder containing ometiffs
-    gfpFolder = 'C:\workfolder\GFP_folder';
-    mCherryFolder = 'C:\workfolder\mCherry_folder';
+    gfpFolder = 'C:\Users\Barnet\Desktop\2017\GFP_processing_folder';
+    mCherryFolder = 'C:\Users\Barnet\Desktop\2017\mCherry_processing_folder';
 
     % open and combine ome-tiffs, then save as tiffs in new folder
     %display('Unpacking ometiffs')
@@ -119,7 +119,7 @@ function tumour_volumes = tumour_processing
         %save vesselfile vessel_data -v7.3;
         
         vessel_data = uint8(vessel_data./max(vessel_data(:)).*256);
-        save(vesselfile2 ,'vessel_data','v7.3'); 
+        save(vesselfile2 ,'vessel_data','-v7.3'); 
         %save vesselfile2 vessel_data -v7.3;
         
         threshedfile = strcat(gfpReconThreshFolder,'\',gfpDataNames{n},'.mat');
