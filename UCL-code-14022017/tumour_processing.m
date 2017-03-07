@@ -36,15 +36,38 @@ function tumour_volumes = tumour_processing
     
     gfpCropFolder = strcat(gfpFolder,'\cropped');
     mkdir(gfpCropFolder);
-
+    
+    mCherrySegFolder = strcat(mCherryFolder,'\segmented');
+    mkdir(mCherrySegFolder);  
+    
+    for n = 1:(length(mCherryDataNames))
+        display(strcat('Segmenting projections ',int2str(n),' of ',' ',int2str(length(mCherryDataNames))))        
+        mkdir(strcat(mCherrySegFolder,'\',mCherryDataNames{n}));        
+        fish_segment_YA_2(strcat(mCherryRawFolder,mCherryDataNames{n},'\'),strcat(mCherrySegFolder,'\',mCherryDataNames{n},'\'))
+    end
+    
+    prompt = 'Ready to check segmentations?';
+    input(prompt);
+    good = zeros(length(mCherryDataNames),1);
+    
+    for n = 1:(length(mCherryDataNames))        
+        display(strcat('Checking segmentation ',int2str(n),' of ',' ',int2str(length(mCherryDataNames))))        
+        mkdir(strcat(mCherrySegFolder,'\',mCherryDataNames{n}));        
+        good(n) = check_segment(strcat(mCherrySegFolder,'\',mCherryDataNames{n},'\'));
+    end         
+    
     for n = 1:(length(mCherryDataNames))
         display(strcat('Cropping projections ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))        
         mkdir(strcat(mCherryCropFolder,'\',mCherryDataNames{n}));
         mkdir(strcat(gfpCropFolder,'\',gfpDataNames{n}));
-        rectangle = OPT_crop(strcat(mCherryRawFolder,mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),2);
+        if good(n)
+            rectangle = OPT_crop(strcat(mCherrySegFolder,'\',mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),2);
+        else
+            rectangle = OPT_crop(strcat(mCherryRawFolder,mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),2);
+        end
         GFP_crop(strcat(gfpRawFolder,gfpDataNames{n},'\'),strcat(gfpCropFolder,'\',gfpDataNames{n},'\'),rectangle);
     end
-
+    
     mCherryThreshFolder = strcat(mCherryFolder,'\thresholded');
     mkdir(mCherryThreshFolder);
         
@@ -55,7 +78,7 @@ function tumour_volumes = tumour_processing
         display(strcat('Thresholding projections ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))                
         mkdir(strcat(mCherryThreshFolder,'\',mCherryDataNames{n}));      
         mkdir(strcat(gfpThreshFolder,'\',gfpDataNames{n}));
-        threshedfile = strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'.mat');          
+        threshedfile = strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'.mat');
         projection_thresh(strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),threshedfile);
         threshedfile = strcat(gfpThreshFolder,'\',gfpDataNames{n},'.mat');        
         projection_thresh(strcat(gfpCropFolder,'\',gfpDataNames{n},'\'),threshedfile);
