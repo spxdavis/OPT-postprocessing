@@ -1,16 +1,21 @@
-function crop_3D(datafile,cropfile)
-
+function rect2 = crop_3D(datafile,cropfile,rect2)
+    
     volume = open(datafile);
     name = fieldnames(volume);
     volume = volume.(name{1});
-    finished = 0;    
+    
+    if nargin < 3
+        finished = 0;
+    else
+        finished = 1;
+    end
     while ~finished
         [~,rect2] = imcrop(volume(:,:,ceil(size(volume,3)/2))./max(max(volume(:,:,ceil(size(volume,3)/2)))));
         
         for i=1:size(volume,3)
             RGB = insertShape(volume(:,:,i)./max(max(volume(:,:,i))),'rectangle',rect2,'LineWidth',5);
             imshow(RGB)
-            pause(0.1)
+            pause(0.005)
         end
         close all
         prompt = 'Type 1 if crop is good, 0 if bad. ';
