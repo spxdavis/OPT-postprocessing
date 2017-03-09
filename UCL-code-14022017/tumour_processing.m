@@ -102,7 +102,7 @@ function tumour_volumes = tumour_processing
     gfpReconThreshFolder = strcat(gfpReconFolder,'\Thresholded');  
     mkdir(gfpReconThreshFolder);    
     
-    rect = zeros(2,2,length(gfpDataNames));
+    rect = zeros(length(gfpDataNames),4);
     
     for n = 1:length(gfpDataNames)
         
@@ -110,7 +110,7 @@ function tumour_volumes = tumour_processing
         croppedfile = strcat(gfpReconCropFolder,'\',gfpDataNames{n},'.mat');
         threshedfile = strcat(gfpReconThreshFolder,'\',gfpDataNames{n},'.mat');
         display(strcat('Cropping tumour volume ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))        
-        rect(:,:,n) = crop_3D(volumefile,croppedfile);
+        rect(n,:) = crop_3D(volumefile,croppedfile);
         display(strcat('Thresholding tumour volume ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))        
         tumour_volumes(n) = volume_thresh(croppedfile,threshedfile)*(0.013^3);
     end

@@ -26,5 +26,7 @@ function pixel_volume = volume_thresh(datafile,threshfile)
     end
     pixel_volume = sum(volume(:)>=LL);
     save(threshfile,'volume','-v7.3');
+    nii=make_nii(volume);
+    save_nii(nii,strcat(threshfile(1:end-3),'nii'));    
     %save threshfile volume -v7.3;
 end
