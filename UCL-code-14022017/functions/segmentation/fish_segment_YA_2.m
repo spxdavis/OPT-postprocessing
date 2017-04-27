@@ -5,11 +5,16 @@ dataNames = { dataFiles.name };
 
 
 for i = 1:length(dataNames)
+    i
     img = double(imread(strcat(dataFolder,dataNames{i})));
-    [u,sgm] = do_segmetnation(img);
-    %figure
-    %imshow(img.*double(sgm),[]);
+    if isGpuAvailable
+        img = gpuArray(img);
+    end
+    [u,sgm] = do_segmetnation(img);    
     u(sgm==0)=min(u(:));
+    if isGpuAvailable
+        u = gather(u);
+    end
     imwrite(uint16(u),strcat(saveFolder,dataNames{i}));
 end
 
@@ -38,6 +43,11 @@ function [u,sgm] = do_segmetnation(fullfilename)
                 
                 str1 = zeros(size(u));
                 str2 = zeros(size(u));
+                if isGpuAvailable
+                    str1 = gpuArray(str1);
+                    str2 = gpuArray(str2);
+                end
+                
                 %
                 sigma1 = fix(S1/2);
                 sigma2 = fix(S2/2);
@@ -45,15 +55,17 @@ function [u,sgm] = do_segmetnation(fullfilename)
                 [uxx2,uxy2,uyy2] = gsderiv(u,sigma2,2);
                 %
                 % dirty solution
-                hw = waitbar(0,'Conducting Ridge segmentation, please wait');
-                for x=1:size(u,1)
-                    if ~isempty(hw), waitbar(x/size(u,1),hw); drawnow, end;                            
-                    for y=1:size(u,2)
-                        H = [uxx1(x,y) uxy1(x,y); uxy1(x,y) uyy1(x,y)];
-                        [~,D] = eig(H);
-                        upp = D(1,1); 
-                        uqq = D(2,2);
-                        str1(x,y) = -upp-uqq;
+                str1 = -(uxx1+uyy1);
+                str2 = -(uxx2+uyy2);
+                %hw = waitbar(0,'Conducting Ridge segmentation, please wait');
+                %for x=1:size(u,1)
+                %    if ~isempty(hw), waitbar(x/size(u,1),hw); drawnow, end;                            
+                %    for y=1:size(u,2)
+                %        H = [uxx1(x,y) uxy1(x,y); uxy1(x,y) uyy1(x,y)];
+                %        [~,D] = eig(H);
+                %        upp = D(1,1); 
+                %        uqq = D(2,2);
+                %        str1(x,y) = -upp-uqq;
                         %                                                        
                             % case 'Ridge'
                                 %if upp < 0 % && uqq~=0
@@ -61,22 +73,22 @@ function [u,sgm] = do_segmetnation(fullfilename)
                                 %    %str1(x,y) = uqq - upp;
                                 %end                                                                
                         %
-                        H = [uxx2(x,y) uxy2(x,y); uxy2(x,y) uyy2(x,y)];
-                        [~,D] = eig(H); 
-                        upp = D(1,1); 
-                        uqq = D(2,2);
+                %        H = [uxx2(x,y) uxy2(x,y); uxy2(x,y) uyy2(x,y)];
+                %        [~,D] = eig(H); 
+                %        upp = D(1,1); 
+                %        uqq = D(2,2);
                         %                                
                             % case 'Ridge'
                                 %if upp < 0 % && uqq~=0
                                 %    str2(x,y) = abs(upp);
                                 %    %str2(x,y) = uqq - upp;
                                 %end  
-                        str2(x,y) = -upp-uqq;
-                    end                    
-                end
-                if ~isempty(hw), delete(hw), drawnow; end;
+                %        str2(x,y) = -upp-uqq;
+                %    end                    
+                %end
+%                if ~isempty(hw), delete(hw), drawnow; end;
                 %                             
-                z = pixelwise_max(nth1.*map((str1),0,1),nth2.*map((str2),0,1)); 
+                z = max(nth1.*map((str1),0,1),nth2.*map((str2),0,1));
                 t = 0.003; % threshold 
                 z1 = z>t;                                  
 
@@ -86,7 +98,10 @@ function [u,sgm] = do_segmetnation(fullfilename)
                 nth(nth<t)=0;
                 
                 z2 = nth;
-                
+                if isGpuAvailable
+                    z2 = gather(z2);
+                    z1 = gather(z1);
+                end
                 z2 = imopen(z2,strel('disk',30));
                 z = z2 | z1;
                 z = imopen(z,strel('disk',30)); %?

@@ -64,13 +64,22 @@ us = conv2br(kernel, kernel, u);
 switch order
 case 0
    y = us;
+   if isGpuAvailable
+       y = gpuArray(y);
+   end
 case 1
    y = zeros([size(us) 2]);
+   if isGpuAvailable
+       y = gpuArray(y);
+   end
    [y(:,:,1), y(:,:,2)] = gradient(us);
    %y(:,:,1) = centdiff(us,2);
    %y(:,:,2) = centdiff(us,1);
 case 2
    y = zeros([size(us) 3]);
+  if isGpuAvailable
+       y = gpuArray(y);
+   end
    [y(:,:,1), y(:,:,3)] = gradient(us); %[dx dy]
    [y(:,:,1), y(:,:,2)] = gradient(y(:,:,1)); % [dx2 dxdy]
    y(:,:,3) = centdiff(y(:,:,3),1); % dydy
