@@ -68,21 +68,21 @@ function tumour_volumes = tumour_processing
         GFP_crop(strcat(gfpRawFolder,gfpDataNames{n},'\'),strcat(gfpCropFolder,'\',gfpDataNames{n},'\'),rectangle);
     end
     
-    mCherryThreshFolder = strcat(mCherryFolder,'\thresholded');
-    mkdir(mCherryThreshFolder);
+    %mCherryThreshFolder = strcat(mCherryFolder,'\thresholded');
+    %mkdir(mCherryThreshFolder);
         
-    gfpThreshFolder = strcat(gfpFolder,'\thresholded');    
-    mkdir(gfpThreshFolder);
+    %gfpThreshFolder = strcat(gfpFolder,'\thresholded');    
+    %mkdir(gfpThreshFolder);
     
-    for n = 1:(length(gfpDataNames))
-        display(strcat('Thresholding projections ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))                
-        mkdir(strcat(mCherryThreshFolder,'\',mCherryDataNames{n}));      
-        mkdir(strcat(gfpThreshFolder,'\',gfpDataNames{n}));
-        threshedfile = strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'.mat');
-        projection_thresh(strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),threshedfile);
-        threshedfile = strcat(gfpThreshFolder,'\',gfpDataNames{n},'.mat');        
-        projection_thresh(strcat(gfpCropFolder,'\',gfpDataNames{n},'\'),threshedfile);
-    end
+    %for n = 1:(length(gfpDataNames))
+    %    display(strcat('Thresholding projections ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))                
+    %    mkdir(strcat(mCherryThreshFolder,'\',mCherryDataNames{n}));      
+    %    mkdir(strcat(gfpThreshFolder,'\',gfpDataNames{n}));
+    %    threshedfile = strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'.mat');
+    %    projection_thresh(strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),threshedfile);
+    %    threshedfile = strcat(gfpThreshFolder,'\',gfpDataNames{n},'.mat');        
+    %    projection_thresh(strcat(gfpCropFolder,'\',gfpDataNames{n},'\'),threshedfile);
+    %end
 
     mCherryReconFolder = strcat(mCherryFolder,'\reconstructions');
     mkdir(mCherryReconFolder);    
@@ -91,9 +91,11 @@ function tumour_volumes = tumour_processing
     
     for n = 1:length(gfpDataNames)
         display(strcat('Reconstructing projections ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))        
-        threshedfile = strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'.mat');                 
+        %threshedfile = strcat(mCherryThreshFolder,'\',mCherryDataNames{n},'.mat');
+        threshedfile = strcat(mCherryCropFolder,'\',mCherryDataNames{n},'.mat');
         TwISTmCherry(threshedfile,strcat(mCherryReconFolder,'\',mCherryDataNames{n},'.mat'));
-        threshedfile = strcat(gfpThreshFolder,'\',gfpDataNames{n},'.mat');         
+        %threshedfile = strcat(gfpThreshFolder,'\',gfpDataNames{n},'.mat');
+        threshedfile = strcat(gfpCropFolder,'\',gfpDataNames{n},'.mat');
         TwISTgfp(threshedfile,strcat(gfpReconFolder,'\',gfpDataNames{n},'.mat'));
     end
 
