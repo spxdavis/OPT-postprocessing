@@ -9,10 +9,12 @@ function rect2 = OPT_crop(dataFolder,cropFolder,rot_axis)
     for i=1:length(dataNames)
         volume(:,:,i) = imread(strcat(dataFolder,dataNames{i}));
     end
-
+    
+    mip = max(volume,3);    
+    
     finished = 0;    
     while ~finished
-        [~,rect2] = imcrop(volume(:,:,1)./max(max(volume(:,:,1))));
+        [~,rect2] = imcrop(mip);
         
         if rot_axis == 2
             delta = (sizeCheck(1)-rect2(4)-rect2(2))-rect2(2);
@@ -32,13 +34,14 @@ function rect2 = OPT_crop(dataFolder,cropFolder,rot_axis)
             end     
         end
         
-        for i=1:length(dataNames)
-            RGB = insertShape(volume(:,:,i)./max(max(volume(:,:,i))),'rectangle',rect2,'LineWidth',5);
-            imshow(RGB)
-        end
+        %for i=1:length(dataNames)
+        %    RGB = insertShape(volume(:,:,i)./max(max(volume(:,:,i))),'rectangle',rect2,'LineWidth',5);
+        %    imshow(RGB)
+        %end
         close all
-        prompt = 'Type 1 if crop is good, 0 if bad. ';
-        finished = input(prompt);        
+        %prompt = 'Type 1 if crop is good, 0 if bad. ';
+        %finished = input(prompt);        
+        finished = 1;
     end
 
     for i = 1:length(dataNames)
