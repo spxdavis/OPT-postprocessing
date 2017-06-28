@@ -1,4 +1,4 @@
-function rect2 = OPT_crop(dataFolder,cropFolder,rot_axis)
+function rect2 = OPT_crop(dataFolder,cropfile,rot_axis)
 
     dataFiles = dir(strcat(dataFolder,'*.tif'));
     dataNames = { dataFiles.name };
@@ -10,12 +10,12 @@ function rect2 = OPT_crop(dataFolder,cropFolder,rot_axis)
         volume(:,:,i) = imread(strcat(dataFolder,dataNames{i}));
     end
     
-    mip = max(volume,3);    
+    mip = max(volume,[],3)/max(volume(:));    
     
     finished = 0;    
     while ~finished
         [~,rect2] = imcrop(mip);
-        
+        rect2 = round(rect2);
         if rot_axis == 2
             delta = (sizeCheck(1)-rect2(4)-rect2(2))-rect2(2);
             if delta > 0
@@ -43,9 +43,13 @@ function rect2 = OPT_crop(dataFolder,cropFolder,rot_axis)
         %finished = input(prompt);        
         finished = 1;
     end
-
-    for i = 1:length(dataNames)
-        I = imcrop(volume(:,:,i),rect2);
-        imwrite(uint16(I),strcat(cropFolder,dataNames{i}));
+    
+    sizeCheck = imcrop(volume(:,:,1),rect2);
+    croppedVolume = zeros(size(sizeCheck,1),size(sizeCheck,2),size(volume,3));
+    for i=1:size(volume,3)
+        croppedVolume(:,:,i) = imcrop(volume(:,:,i),rect2);        
     end
+    save(cropfile,'croppedVolume','-v7.3');
+    %save cropfile croppedVolume -v7.3;
+    close all    
 end

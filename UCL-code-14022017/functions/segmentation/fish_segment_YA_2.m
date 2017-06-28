@@ -5,7 +5,7 @@ dataNames = { dataFiles.name };
 
 
 for i = 1:length(dataNames)
-    i
+    
     img = double(imread(strcat(dataFolder,dataNames{i})));
     if isGpuAvailable
         img = gpuArray(img);

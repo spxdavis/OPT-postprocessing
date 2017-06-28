@@ -5,8 +5,8 @@ function tumour_volumes = tumour_processing
     %single or multiple camera datasets
 
     % folder containing ometiffs
-    gfpFolder = 'C:\Users\Barnet\Desktop\2017\GFP_processing_folder';
-    mCherryFolder = 'C:\Users\Barnet\Desktop\2017\mCherry_processing_folder';
+    gfpFolder = 'F:\LauraOPT\2017\GFP_processing_folder';
+    mCherryFolder = 'F:\LauraOPT\2017\mCherry_processing_folder';
 
     % open and combine ome-tiffs, then save as tiffs in new folder
     %display('Unpacking ometiffs')
@@ -61,11 +61,11 @@ function tumour_volumes = tumour_processing
         mkdir(strcat(mCherryCropFolder,'\',mCherryDataNames{n}));
         mkdir(strcat(gfpCropFolder,'\',gfpDataNames{n}));
         if good(n)
-            rectangle = OPT_crop(strcat(mCherrySegFolder,'\',mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),2);
+            rectangle = OPT_crop(strcat(mCherrySegFolder,'\',mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'.mat'),2);
         else
-            rectangle = OPT_crop(strcat(mCherryRawFolder,mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'\'),2);
+            rectangle = OPT_crop(strcat(mCherryRawFolder,mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'.mat'),2);
         end
-        GFP_crop(strcat(gfpRawFolder,gfpDataNames{n},'\'),strcat(gfpCropFolder,'\',gfpDataNames{n},'\'),rectangle);
+        GFP_crop(strcat(gfpRawFolder,gfpDataNames{n},'\'),strcat(gfpCropFolder,'\',gfpDataNames{n},'.mat'),rectangle);
     end
     
     %mCherryThreshFolder = strcat(mCherryFolder,'\thresholded');
@@ -104,7 +104,7 @@ function tumour_volumes = tumour_processing
     gfpReconThreshFolder = strcat(gfpReconFolder,'\Thresholded');  
     mkdir(gfpReconThreshFolder);    
     
-    rect = zeros(length(gfpDataNames),4);
+    rect = zeros(length(gfpDataNames),4,2);
     
     for n = 1:length(gfpDataNames)
         
@@ -112,7 +112,7 @@ function tumour_volumes = tumour_processing
         croppedfile = strcat(gfpReconCropFolder,'\',gfpDataNames{n},'.mat');
         threshedfile = strcat(gfpReconThreshFolder,'\',gfpDataNames{n},'.mat');
         display(strcat('Cropping tumour volume ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))        
-        rect(n,:) = crop_3D(volumefile,croppedfile);
+        [rect(n,:,1),rect(n,:,2)] = crop_3D(volumefile,croppedfile);
         display(strcat('Thresholding tumour volume ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))        
         tumour_volumes(n) = volume_thresh(croppedfile,threshedfile)*(0.013^3);
     end
@@ -133,7 +133,7 @@ function tumour_volumes = tumour_processing
         vesselfile = strcat(mCherryReconVesselFolder,'\',mCherryDataNames{n},'.mat');
         vesselfile2 = strcat(mCherryReconVesselFolder,'\',mCherryDataNames{n},'2.mat');
         display(strcat('Cropping vasculature volume ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))                        
-        crop_3D(volumefile,croppedfile,rect(:,:,n));
+        crop_3D(volumefile,croppedfile,squeeze(rect(n,:,1)),squeeze(rect(n,:,2)));
         display(strcat('Thresholding vasculature volume ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))
         volume_thresh(croppedfile,threshedfile);
         
