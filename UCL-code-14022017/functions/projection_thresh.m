@@ -1,14 +1,8 @@
-function projection_thresh(dataFolder, savename)
+function projection_thresh(datafile, savename)
 
-    dataFiles = dir(strcat(dataFolder,'*.tif'));
-    dataNames = { dataFiles.name };
-    sizeCheck = imread(strcat(dataFolder,dataNames{1}));
-    sizeCheck = size(sizeCheck);
-    volume = zeros(sizeCheck(1),sizeCheck(2),length(dataNames));
-    
-    for i=1:length(dataNames)
-        volume(:,:,i) = imread(strcat(dataFolder,dataNames{i}));
-    end
+    proj = open(datafile);
+    name = fieldnames(proj);
+    volume = proj.(name{1});
     
     LL = floor(max(volume(:))/4);    
     finished = 0;
@@ -16,7 +10,7 @@ function projection_thresh(dataFolder, savename)
     %[LL,~] = manual_thresh(volume(:,:,1));
     [LL,~] = manual_thresh(volume(:,:,ceil(size(volume,3)/2)),'jet',LL);
     close all
-        for i=1:length(dataNames)            
+        for i=1:size(volume,3)           
             img = volume(:,:,i);
             img = [img.*(img>=LL);img.*(img<LL)];
             imshow(img,[])
