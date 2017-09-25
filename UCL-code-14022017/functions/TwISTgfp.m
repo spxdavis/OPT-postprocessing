@@ -16,10 +16,12 @@ function TwISTgfp(datafile,savename)
     %recon = zeros(sizeCheck(1),sizeCheck(1),sizeCheck(2));
     recon = zeros(size(proj,1),size(proj,1),size(proj,2));
     
-    hR = @(x)  radon(x, angles);
+    %hR = @(x)  radon(x, angles);
+    angles2 = linspace(0,180-180/size(proj,3),size(proj,3)/2);
+    hR = @(x) hR2(x,angles2);
     hRT = @(x) iradon(x, angles,'linear','Hann',0.6,size(recon,1));
     % denoising function;
-    tv_iters =25; %tumour 25, vasc 10
+    tv_iters =50; %tumour 25, vasc 10
     Psi = @(x,th)  tvdenoise(x,2/th,tv_iters);
 
     % set the penalty function, to compute the objective

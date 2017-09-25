@@ -5,8 +5,8 @@ function tumour_volumes = tumour_processing
     %single or multiple camera datasets
 
     % folder containing ometiffs
-    gfpFolder = 'F:\LauraOPT\2017\GFP_processing_folder';
-    mCherryFolder = 'F:\LauraOPT\2017\mCherry_processing_folder';
+    gfpFolder = 'C:\Users\fogim\Desktop\GFP';
+    mCherryFolder = 'C:\Users\fogim\Desktop\mCherry';
 
     % open and combine ome-tiffs, then save as tiffs in new folder
     %display('Unpacking ometiffs')
@@ -96,7 +96,7 @@ function tumour_volumes = tumour_processing
         TwISTmCherry(threshedfile,strcat(mCherryReconFolder,'\',mCherryDataNames{n},'.mat'));
         threshedfile = strcat(gfpThreshFolder,'\',gfpDataNames{n},'.mat');
         %threshedfile = strcat(gfpCropFolder,'\',gfpDataNames{n},'.mat');
-        TwISTgfp(threshedfile,strcat(gfpReconFolder,'\',gfpDataNames{n},'.mat'));
+        TwISTmCherry(threshedfile,strcat(gfpReconFolder,'\',gfpDataNames{n},'.mat'));
     end
 
     gfpReconCropFolder = strcat(gfpReconFolder,'\Cropped');  
