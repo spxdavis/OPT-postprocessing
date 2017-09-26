@@ -5,15 +5,20 @@ function pixel_volume = volume_thresh(datafile,threshfile)
     volume = volume.(name{1});
 
     finished = 0;
-    LL = floor(max(volume(:))/4);    
+    LL = floor(max(volume(:))/4);
+    
+    [valmax,locmax] = max(volume(:));
+    [~,~,z] = ind2sub(size(volume),locmax);
+    
     while ~finished    
-    [LL,~] = manual_thresh(volume(:,:,ceil(size(volume,3)/2)),'jet',LL);
+    [LL,~] = manual_thresh(volume(:,:,z),'jet',LL);
     %[LL,~] = manual_thresh(volume(:,:,1));    
     close all
+    
         for i=1:size(volume,3)            
             img = volume(:,:,i);
-            img = [img.*(img>=LL);img.*(img<LL)];
-            imshow(img,[]);
+            catimg = vertcat(img.*(img>=LL),img);
+            imshow(catimg,[0,valmax]);
             %pause(0.1)
         end
         close all

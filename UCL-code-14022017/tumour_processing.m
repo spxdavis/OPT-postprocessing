@@ -5,8 +5,8 @@ function tumour_volumes = tumour_processing
     %single or multiple camera datasets
 
     % folder containing ometiffs
-    gfpFolder = 'C:\Users\fogim\Desktop\GFP';
-    mCherryFolder = 'C:\Users\fogim\Desktop\mCherry';
+    gfpFolder = 'F:\LauraOPT\2017\GFP_processing_folder';
+    mCherryFolder = 'F:\LauraOPT\2017\mCherry_processing_folder';
 
     % open and combine ome-tiffs, then save as tiffs in new folder
     %display('Unpacking ometiffs')
@@ -60,12 +60,13 @@ function tumour_volumes = tumour_processing
         display(strcat('Cropping projections ',int2str(n),' of',' ',int2str(length(mCherryDataNames))))        
         %mkdir(strcat(mCherryCropFolder,'\',mCherryDataNames{n}));
         %mkdir(strcat(gfpCropFolder,'\',gfpDataNames{n}));
+        rectangle = OPT_crop(strcat(gfpRawFolder,gfpDataNames{n},'\'),strcat(gfpCropFolder,'\',gfpDataNames{n},'.mat'),2);
         if good(n)
-            rectangle = OPT_crop(strcat(mCherrySegFolder,'\',mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'.mat'),2);
+            GFP_crop(strcat(mCherrySegFolder,'\',mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'.mat'),rectangle);
         else
-            rectangle = OPT_crop(strcat(mCherryRawFolder,mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'.mat'),2);
+            GFP_crop(strcat(mCherryRawFolder,mCherryDataNames{n},'\'),strcat(mCherryCropFolder,'\',mCherryDataNames{n},'.mat'),rectangle);
         end
-        GFP_crop(strcat(gfpRawFolder,gfpDataNames{n},'\'),strcat(gfpCropFolder,'\',gfpDataNames{n},'.mat'),rectangle);
+        
     end
     
     mCherryThreshFolder = strcat(mCherryFolder,'\thresholded');

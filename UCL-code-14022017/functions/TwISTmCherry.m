@@ -125,10 +125,10 @@ function TwISTmCherry(datafile,savename)
         normslices(:,:,ii) = x_twist./max(x_twist(:));
         spectrum = abs(fftshift(fft2(normslices(:,:,ii))));
         metric(ii) = -(sum(sum(mask2.*spectrum))./sum(sum(spectrum)));
-        figure(ii); imshow(slices(:,:,ii),[])
+        %figure(ii); imshow(slices(:,:,ii),[])
         end
 
-        figure(4); plot(taus,squeeze(metric),'r+');
+        %figure(4); plot(taus,squeeze(metric),'r+');
         [~,I] = min(metric);
         recon(:,:,i) = gather(slices(:,:,I));
     end

@@ -4,7 +4,7 @@ function [rect2, rect1] = crop_3D(datafile,cropfile,rect2,rect1)
     name = fieldnames(volume);
     volume = volume.(name{1});
     
-    volume(isnan(volume(:))) = 0;
+    volume
     
     mip2 = squeeze(max(volume,[],2)/max(volume(:)));
     
