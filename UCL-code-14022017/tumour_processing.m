@@ -151,7 +151,7 @@ function tumour_volumes = tumour_processing
         %save vesselfile2 vessel_data -v7.3;
         
         threshedfile = strcat(gfpReconThreshFolder,'\',gfpDataNames{n},'.mat');
-        postvascsegfile = strcat(mCherryReconVesselFolder,'\',mCherryDataNames{n},'3.mat');
+        postvascsegfile = strcat(mCherryReconVesselFolder,'\',mCherryDataNames{n},'_tumour-cropped.mat');
         postvascsegmentation(vesselfile2,threshedfile,postvascsegfile);
         
     end
