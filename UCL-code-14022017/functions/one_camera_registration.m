@@ -1,4 +1,4 @@
-function [hshift, rotation] = one_camera_registration(dataFolder,rotaxis,angleList,szT)
+function [hshift, rotation, proj] = one_camera_registration(dataFolder,rotaxis,angleList,szT)
     % function to return the shift and rotation needed to register the projections
     % found in dataFolder for reconstruction. rotaxis = 1 for a vertical
     % rotation axis and 2 for a horizontal rotation axis
@@ -45,8 +45,10 @@ function [hshift, rotation] = one_camera_registration(dataFolder,rotaxis,angleLi
     hshift = 0;
     rotation = 0;
     finished = 0;
+    count = 0;
     
-    while ~finished
+    while ~finished && count < 20
+        count = count+1;
         clear proj
         for i = 1:size(rawproj,3)
             proj(:,:,i) = imshift(rawproj(:,:,i),0,hshift,-rotation);
@@ -79,7 +81,7 @@ function [hshift, rotation] = one_camera_registration(dataFolder,rotaxis,angleLi
             sample(y) = mean(sino(:));
         end
         T = quantile(sample, M1_brightness_quantile_threshold);
-        brightEnough = sample > T;
+        brightEnough = sample > max([T,max(sample)/2]);
 
         %nRegions = 16;
         %regions = ceil([1,(1:nRegions)*size(sizeCheck,2)/nRegions]);
@@ -102,7 +104,7 @@ function [hshift, rotation] = one_camera_registration(dataFolder,rotaxis,angleLi
         for n = 1:length(brightEnough)
             if brightEnough(n)
                 sino = squeeze(proj(:,n,:));
-                [shift(n), r(n)] = quickMidindex(sino,20,2,angleList);
+                [shift(n), r(n)] = quickMidindex(sino,12,2,angleList);
             end    
         end
 
@@ -134,7 +136,7 @@ function [hshift, rotation] = one_camera_registration(dataFolder,rotaxis,angleLi
         fitobject = fit(ns,shift,'poly1','Robust','on');
         newshift = round(fitobject.p2);
         newrotation = fitobject.p1;
-        if (abs(tan(newrotation)) < 1/size(proj,2)) & (abs(newshift) < 1) 
+        if (abs(tan(newrotation)) < 1/size(proj,2)) && (abs(newshift) < 2) 
             finished = 1;
         else
             hshift = hshift + newshift

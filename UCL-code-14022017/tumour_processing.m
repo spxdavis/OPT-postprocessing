@@ -5,8 +5,8 @@ function tumour_volumes = tumour_processing
     %single or multiple camera datasets
 
     % folder containing ometiffs
-    gfpFolder = 'F:\LauraOPT\2017\GFP_processing_folder';
-    mCherryFolder = 'F:\LauraOPT\2017\mCherry_processing_folder';
+    gfpFolder = 'C:\Users\fogim\Desktop\mCherry';
+    mCherryFolder = 'C:\Users\fogim\Desktop\mCherry';
 
     % open and combine ome-tiffs, then save as tiffs in new folder
     %display('Unpacking ometiffs')

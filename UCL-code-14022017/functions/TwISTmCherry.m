@@ -63,7 +63,7 @@ function TwISTmCherry(datafile,savename)
     ksampled = R(MTF>lcutoff);
     ksampled = sort(ksampled);
     dk = diff(ksampled);
-    maxk = min(ksampled(dk>sqrt(2)));
+    maxk = min([ksampled(dk>sqrt(2)),max(ksampled)]);
     
     mult = 0.8; 
     mask = MTF<lcutoff.*(R<(mult*maxk));
